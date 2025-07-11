@@ -1,8 +1,8 @@
 <template>
   <div>
     <formulario v-if="showForm" @form-submitted="handleFormSubmit" />
-    <recompensas v-else-if="showRecompensas" @close="cerrarRecompensas" />
-    <personas v-else-if="showPersonas" @close="cerrarPersonas" />
+    <recompensas v-else-if="showRecompensas" :estrellas="stars" @comprar="descontarEstrellas" @close="cerrarRecompensas" />
+    <personas v-else-if="showPersonas" :perfil="userData[0]" @close="cerrarPersonas" />
     <div v-else>
       <div class="container">
         <div class="clock">
@@ -21,19 +21,7 @@
                 <img :src="gifSrc" :class="['gifprincipal', etapa === 'pausa' ? 'gif-pausa' : '']" alt="" />
               </div>
               <div class="datos">
-                <div class="encabezadotarjet">
-                  <img src="/imgs/corazon.png" alt="" class="corazon">
-                  <img src="/imgs/ritmo.png" alt="" class="ritmo">
-                </div>
-                <hr>
-                <hr>
-                <div class="grilla2">
-                  <h3></h3>
-                  <div>
-                  </div>
-                  <div>
-                  </div>
-                </div>
+                
               </div>
             </div>
             <div class="buttons">
@@ -48,12 +36,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue"
+import { ref, onUnmounted } from "vue"
 import formulario from "./components/formulario.vue"
 import recompensas from "./components/recompensas.vue"
 import personas from "./components/personas.vue"
 
-const stars = ref(500)
+const stars = ref(100)
 const message = ref("Es momento de trabajar")
 const showForm = ref(true)
 const userData = ref([])
@@ -63,6 +51,7 @@ const showPersonas = ref(false)
 function handleFormSubmit(data) {
   userData.value = [data]
   showForm.value = false
+  startTrabajo()
 }
 function abrirRecompensas() {
   showRecompensas.value = true
@@ -125,9 +114,9 @@ function startRecompensa() {
   }, 3000)
 }
 
-onMounted(() => {
-  startTrabajo()
-})
+function descontarEstrellas(precio) {
+  stars.value -= precio
+}
 
 onUnmounted(() => {
   if (timer) clearInterval(timer)
@@ -201,7 +190,10 @@ h2 {
 .datos {
   border: 1px solid #01204E;
   position: relative;
-  padding: 10px;
+  background-image: url('/imgs/cardiaco.gif');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .ritmo,
@@ -321,6 +313,7 @@ hr {
     .home {
       width: 280px;
       height: 360px;
+      border-radius: 40px;
     }
     .comic-bubble{
       width: 220px;
@@ -354,6 +347,7 @@ hr {
     span{
       font-size: 15px;
     }
+
     .comic-bubble{
       width: 200px;
       height: 90px;
